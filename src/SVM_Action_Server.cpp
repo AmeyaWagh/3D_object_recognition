@@ -1,10 +1,13 @@
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <actionlib/server/simple_action_server.h>
 #include <robot_vision/SVMclassifierAction.h>
 #include <robot_vision/classifier.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/ml/ml.hpp>
+
+std::string pkgPath = ros::package::getPath("robot_vision");
 
 
 class FibonacciAction
@@ -25,8 +28,8 @@ public:
   FibonacciAction(std::string name) :
     as_(nh_, name, boost::bind(&FibonacciAction::executeCB, this, _1), false),
     action_name_(name),
-    bowlClf("/home/ameya/projects/PCL_project/pcl_cpp/trainer/build/bowl_1.xml"),
-    MugClf("/home/ameya/projects/PCL_project/pcl_cpp/trainer/build/coffee_mug_1.xml")
+    bowlClf(pkgPath+"/bin/bowl_1.xml"),
+    MugClf(pkgPath+"/bin/coffee_mug_1.xml")
   {
     as_.start();
   }
@@ -119,6 +122,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "SVMActionServer");
   ROS_INFO("SVM Action server started");
+  std::cout << "pkgPath:" << pkgPath << std::endl;
   FibonacciAction fibonacci("SVMAction");
   ros::spin();
 
