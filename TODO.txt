@@ -1,3 +1,0 @@
-1. Make SVM as ROS Action (Done)
-2. Make SVM trainer script as ROS node
-3. Make Python Based SVM Classifier
