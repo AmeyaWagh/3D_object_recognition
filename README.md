@@ -31,3 +31,4 @@ roslaunch robot_vision robot_vision.launch
 ```
 	/bin - contains .pcd scenes which are broadcasted
 ```
+* project is still in development stage
