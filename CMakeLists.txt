@@ -68,7 +68,7 @@ find_package( OpenCV 2 REQUIRED )
 ## Generate actions in the 'action' folder
  add_action_files(
     DIRECTORY action
-    FILES Fibonacci.action
+#    FILES Fibonacci.action
     FILES SVMclassifier.action
  )
 
