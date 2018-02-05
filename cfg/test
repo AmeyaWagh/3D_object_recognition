@@ -1,0 +1,31 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  PercentageCloud: 40.0
+  distanceThreshold: 0.03
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      PercentageCloud: 40.0
+      distanceThreshold: 0.03
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      maxClustersSize: 25000
+      minClustersSize: 100
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      removePlaneIterations: 100
+      size: 1
+      state: true
+      tolerance: 0.03
+      type: ''
+      voxelLeafSize: 0.01
+    state: []
+  maxClustersSize: 25000
+  minClustersSize: 100
+  removePlaneIterations: 100
+  size: 1
+  tolerance: 0.03
+  voxelLeafSize: 0.01
+state: []

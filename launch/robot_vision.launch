@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<launch>
+	<!-- Emmits pointcloud scene -->
+	<arg
+		name="pcdFilePath"
+		default="$(find robot_vision)/bin/scenes/10.pcd" />
+	<arg
+		name="cloudPublishRate"
+		default="5" />	
+	<node
+		pkg="pcl_ros"
+		type="pcd_to_pointcloud"
+		name="pcd_to_pointcloud"
+		output="screen"
+		args="$(arg pcdFilePath) $(arg cloudPublishRate)" 
+		/>
+
+
+	<!-- Emmits tf for rviz -->
+	<node 
+		pkg="robot_vision" 
+		type="tf_emitter" 
+		name="tf_emitter"
+		output="screen" 
+		respawn="true" />
+		
+
+	<!-- Publishes Markers -->
+	<node 
+		pkg="robot_vision" 
+		type="obj_detector" 
+		name="obj_detector" 
+		output="screen"
+		respawn="true" />
+
+
+	<!--  rqt_reconfigure  -->
+	<node
+		pkg="rqt_reconfigure" 
+		type="rqt_reconfigure" 
+		name="rqt_reconfigure" 
+		output="screen"
+		respawn="true" />
+
+	<!--  SVM Action server  -->
+	<node
+		pkg="robot_vision" 
+		type="SVM_Action_Server" 
+		name="SVM_Action_Server" 
+		output="screen"
+		respawn="true" />	
+
+
+	<!-- Rviz launch-->
+	<arg 
+		name="rviz"    
+		default="true" />
+    <arg 
+    	name="rviz_file" 
+    	default="$(find robot_vision)/rviz/pcl_proj.rviz" />
+	
+	<node 
+		pkg="rviz" 
+		type="rviz" 
+		name="$(anon rviz)" 
+		args="-d $(arg rviz_file)" 
+		output="screen" if="$(arg rviz)"/>
+
+</launch>
