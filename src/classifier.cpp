@@ -43,6 +43,21 @@ void classifier::trainSVM(cv::Mat _trainingData, cv::Mat _trainingLabels){
     SVMclf.save("svmclf.xml");
 
 }
+void classifier::trainSVM(cv::Mat _trainingData,
+                          cv::Mat _trainingLabels,
+                          std::string fileName){
+    CvSVMParams params;
+    params.svm_type    = CvSVM::C_SVC;
+    params.kernel_type = CvSVM::LINEAR;
+    params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+
+
+    SVMclf.train(_trainingData, _trainingLabels, cv::Mat(), cv::Mat(), params);
+    std::cout << "SVM trained " << std::endl;
+    fileName+=".xml";
+    SVMclf.save(fileName.c_str());
+
+}
 
 float classifier::getConfidence(float distance){
     float conf = 1.0 / ( 1.0 + exp(-1*distance));

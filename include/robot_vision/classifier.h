@@ -35,6 +35,7 @@ public:
     classifier(void);
     classifier(std::string filename);
     void trainSVM(cv::Mat _trainingData, cv::Mat _trainingLabels);
+    void trainSVM(cv::Mat _trainingData, cv::Mat _trainingLabels,std::string fileName);
 
     float getConfidence(float distance);
     void validateSVM(cv::Mat _testData, cv::Mat _testLabels);

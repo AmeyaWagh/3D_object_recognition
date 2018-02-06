@@ -1,0 +1,10 @@
+parsePCD: true
+trainSVM: true
+PCD_BASE_PATH: '/home/ameya/Downloads/Dataset_RGBD/'
+PCD_CLASS_PATHS :
+    - "apple_1"
+    - "banana_1"
+    - "calculator_1"
+    - "bowl_1"
+    - "coffee_mug_1"
+POSITIVE_CLASS: 'banana_1'

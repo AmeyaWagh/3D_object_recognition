@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robot_vision)
-
+#set (CMAKE_CXX_STANDARD 11)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -266,6 +266,27 @@ target_link_libraries(
     tf_emitter
     ${catkin_LIBRARIES})
 
+## SVM_trainer
+add_executable(
+    SVM_trainer
+    ${PROJECT_SOURCE_DIR}/src/SVM_trainer.cpp
+#    ${PROJECT_SOURCE_DIR}/include/robot_vision/json.hpp
+    ${PROJECT_SOURCE_DIR}/src/classifier.cpp
+    ${PROJECT_SOURCE_DIR}/src/descriptors.cpp
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/classifier.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/descriptors.h
+    )
+
+add_dependencies(
+    SVM_trainer
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
+    ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(
+    SVM_trainer
+    ${catkin_LIBRARIES}
+    ${PCL_LIBRARIES}
+    ${OpenCV_LIBS})
 
 ##------------------------------------------------------------------------------##
 ## Action Server

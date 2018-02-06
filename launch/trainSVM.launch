@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <rosparam
+        command="load"
+        file="$(find robot_vision)/cfg/config.yaml" />
+
+    <node
+        pkg="robot_vision"
+        type="SVM_trainer"
+        name="SVM_trainer"
+        output="screen"
+        respawn="false" />
+</launch>
