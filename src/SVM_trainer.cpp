@@ -2,6 +2,8 @@
 #include <ros/package.h>
 #include <stdio.h>
 #include <iostream>
+#include <string>
+
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
@@ -49,7 +51,9 @@ class getPointCloud{
                       std::string _CLASSIFIER_NAME);
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr loadCloud(std::string filePath);
-        void getTrainingData(cv::Mat& trainingData,cv::Mat& trainingLabels);
+
+        void getTrainingData(std::vector <cv::Mat>& _trainingData,
+                             std::vector <cv::Mat>& _trainingLabels);
         int getdir (std::string dir, std::vector<std::string> &files);
 
 };
@@ -86,7 +90,8 @@ getPointCloud::loadCloud(std::string filePath){
 
 
 void
-getPointCloud::getTrainingData(cv::Mat& trainingData,cv::Mat& trainingLabels){
+getPointCloud::getTrainingData(std::vector <cv::Mat>& _trainingData,
+                               std::vector <cv::Mat>& _trainingLabels){
     float minX,minY,minZ=1000.0;
     float maxX,maxY,maxZ=0.0;
 
@@ -94,7 +99,7 @@ getPointCloud::getTrainingData(cv::Mat& trainingData,cv::Mat& trainingLabels){
 
     cv::Mat label = cv::Mat::zeros(1,1,CV_32FC1);
 
-//         Loop over each Directory
+    // Loop over each Directory
     for(size_t fileIdx=0; fileIdx<DataFiles.size();fileIdx++){
         std::vector<std::string> files = std::vector<std::string>();
         pcl::PointXYZ minPt, maxPt;
@@ -103,8 +108,8 @@ getPointCloud::getTrainingData(cv::Mat& trainingData,cv::Mat& trainingLabels){
         getdir(DataFiles[fileIdx]+"/",files);
         ROS_INFO("No of Files: %d",(int)files.size());
 
-        //    cv::Mat trainingData;
-        //    cv::Mat trainingLabels;
+            cv::Mat trainingData;
+            cv::Mat trainingLabels;
         // Loop over each file
         for (unsigned int i = 0;i < files.size();i++) {
 //                 remove this after testing classifier training
@@ -147,7 +152,8 @@ getPointCloud::getTrainingData(cv::Mat& trainingData,cv::Mat& trainingLabels){
 
             }
         }
-        // here
+        _trainingData.push_back(trainingData);
+        _trainingLabels.push_back(trainingLabels);
     }
 }
 
@@ -169,6 +175,18 @@ getPointCloud::getdir (std::string dir, std::vector<std::string> &files)
     return 0;
 }
 
+void write2file(std::string DataFilePath,std::string Fname ,cv::Mat Data){
+        cv::FileStorage file(DataFilePath, cv::FileStorage::WRITE);
+        file << Fname << Data;
+        file.release();
+}
+
+void readFromFile(std::string DataFilePath,std::string Fname ,cv::Mat &Data){
+    cv::FileStorage file(DataFilePath, cv::FileStorage::READ);
+    file[Fname] >> Data;
+    file.release();
+}
+
 int main(int argc, char** argv){
     ros::init(argc,argv,"SVMTrainer");
     std::string pkgPath = ros::package::getPath("robot_vision");
@@ -188,8 +206,8 @@ int main(int argc, char** argv){
         ROS_INFO("class: %s",PCD_CLASS_PATHS[i].c_str());
     }
     ROS_INFO("done");
-    std::string trainDataFile = pkgPath+"/bin/trainingData.xml";
-    std::string trainLabelsFile = pkgPath+"/bin/trainingLabels.xml";
+    std::string trainDataFile = pkgPath+"/bin/Dataset/";
+    std::string trainLabelsFile = pkgPath+"/bin/Dataset/trainingLabels";
     std::string classifierPath = pkgPath+"/bin/"+POSITIVE_CLASS;
     ROS_INFO("trainData: %s",trainDataFile.c_str());
     ROS_INFO("trainLabels: %s",trainLabelsFile.c_str());
@@ -197,44 +215,61 @@ int main(int argc, char** argv){
     classifier clf;
 
     if(parsePCD){
-        cv::Mat trainingData;
-        cv::Mat trainingLabels;
+        std::vector< cv::Mat > _trainingData;
+        std::vector< cv::Mat > _trainingLabels;
 
         getPointCloud p(PCD_BASE_PATH,PCD_CLASS_PATHS,POSITIVE_CLASS);
-        p.getTrainingData(trainingData,trainingLabels);
+        p.getTrainingData(_trainingData,_trainingLabels);
 
-
-        ROS_INFO("Training Data dimensions: rows: %d cols: %d",(int)trainingData.rows,(int)trainingData.cols);
-        ROS_INFO("Training Labels dimensions: rows: %d cols: %d",(int)trainingLabels.rows,(int)trainingLabels.cols);
-
-        {
-            cv::FileStorage file(trainDataFile, cv::FileStorage::WRITE);
-            file << "trainingData" << trainingData;
-            file.release();
+        mkdir((pkgPath+"/bin/Dataset").c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        for (size_t f=0;f<_trainingData.size();f++){
+            ROS_INFO("file: %s",PCD_CLASS_PATHS[f].c_str());
+            ROS_INFO("Training Data dimensions: rows: %d cols: %d",
+                     (int)_trainingData[f].rows,
+                     (int)_trainingData[f].cols);
+            ROS_INFO("Training Labels dimensions: rows: %d cols: %d",
+                     (int)_trainingLabels[f].rows,
+                     (int)_trainingLabels[f].cols);
+            std::stringstream idx;
+            idx << f;
+            write2file(trainDataFile+PCD_CLASS_PATHS[f]+".xml",
+                       PCD_CLASS_PATHS[f],
+                       _trainingData[f]);
         }
-        {
 
-            cv::FileStorage file(trainLabelsFile, cv::FileStorage::WRITE);
-            file << "trainingLabels" << trainingLabels;
-            file.release();
-        }
-//        std::cout << "training Data saved" << std::endl;
+
         ROS_INFO("Training Data saved.");
     }
 
     if(trainSVM){
         cv::Mat trainingData;
         cv::Mat trainingLabels;
-        {
-            cv::FileStorage file(trainDataFile, cv::FileStorage::READ);
-            file["trainingData"] >> trainingData;
-            file.release();
+
+
+        cv::Mat tempLabels = cv::Mat::zeros(1,1,CV_32FC1);
+        float labelval=-1.0;
+
+        for(size_t f=0;f< PCD_CLASS_PATHS.size();f++){
+            cv::Mat temptrainingData;
+            readFromFile(trainDataFile+PCD_CLASS_PATHS[f]+".xml",
+                         PCD_CLASS_PATHS[f],
+                         temptrainingData);
+            trainingData.push_back(temptrainingData);
+
+            if (PCD_CLASS_PATHS[f] == POSITIVE_CLASS){
+                labelval=1.0;
+            }
+            else{
+                labelval= -1.0;
+            }
+
+            for(size_t d=0;d<temptrainingData.rows;d++){
+                tempLabels.at<float>(0,0)=labelval;
+                trainingLabels.push_back(tempLabels);
+            }
+            ROS_INFO("[ CLASS] %s [ LABEL] %f",PCD_CLASS_PATHS[f].c_str(),labelval);
         }
-        {
-            cv::FileStorage file(trainLabelsFile, cv::FileStorage::READ);
-            file["trainingLabels"] >> trainingLabels;
-            file.release();
-        }
+
 
         ROS_INFO("Files Loaded.");
         ROS_INFO("training SVM.");
