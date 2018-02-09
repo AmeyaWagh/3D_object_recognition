@@ -1,5 +1,5 @@
 parsePCD: true
-trainSVM: true
+trainSVM: false
 PCD_BASE_PATH: '/home/ameya/Downloads/Dataset_RGBD/'
 PCD_CLASS_PATHS :
     - "apple_1"

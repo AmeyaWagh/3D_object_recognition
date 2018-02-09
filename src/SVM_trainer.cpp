@@ -113,8 +113,8 @@ getPointCloud::getTrainingData(std::vector <cv::Mat>& _trainingData,
         // Loop over each file
         for (unsigned int i = 0;i < files.size();i++) {
 //                 remove this after testing classifier training
-            if(skip > 5){break;}
-            skip++;
+//            if(skip > 5){break;}
+//            skip++;
 
             if(files[i] == "."  || files[i] == ".."){
                 ROS_INFO(" . or .. files ignored");
