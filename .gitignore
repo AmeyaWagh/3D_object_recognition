@@ -1,6 +1,4 @@
 TODO.txt
-bin/trainingData.xml
-bin/trainingLabels.xml
 bin/banana_1.xml
 bin/Dataset/
-
+bin/*.pkl
