@@ -3,3 +3,5 @@ bin/banana_1.xml
 bin/Dataset/
 bin/*.pkl
 *.pyc
+bin/*.h5
+bin/*.json

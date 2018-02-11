@@ -2,16 +2,7 @@
 import rospy
 import rospkg
 from std_msgs.msg import String
-# import os
-# import numpy as np
-# import cv2
 
-# from sklearn.svm import SVC
-# from sklearn.externals import joblib
-# from sklearn.decomposition import IncrementalPCA
-
-# import matplotlib.pyplot as plt
-# from random import shuffle
 
 rospack = rospkg.RosPack()
 
@@ -26,6 +17,7 @@ if __name__ == '__main__':
     d.parse_data()
     c = Classifier(d.trainingData,d.trainingLabels,d.testData,d.testLabels)
 
-    # d.train_classifier()
-    c.visualize_data()
+    # c.train_classifier()
+    c.trainFCNet()
+    # c.visualize_data()
 

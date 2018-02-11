@@ -6,9 +6,15 @@ from sklearn.externals import joblib
 from sklearn.decomposition import IncrementalPCA
 
 import numpy as np
+import os
 
 import matplotlib.pyplot as plt
 
+from keras.models import Sequential
+from keras.layers import Dense
+
+
+rospack = rospkg.RosPack()
 
 class Classifier:
     def __init__(self, trainingData, trainingLabels, testData, testLabels):
@@ -16,6 +22,8 @@ class Classifier:
         self.trainingLabels = trainingLabels
         self.testData = testData
         self.testLabels = testLabels
+        self.PKG_PATH = rospack.get_path('robot_vision')
+        self.MODEL_PATH = '.'
 
     def train_classifier(self):
         self.clf = SVC(probability=True, verbose=True)
@@ -29,6 +37,21 @@ class Classifier:
         rospy.loginfo("training complete")
         score = self.clf.score(self.trainingData, self.trainingLabels)
         print("score", score)
+
+    def trainFCNet(self):
+        model = Sequential()
+        model.add(Dense(60, input_dim=306, kernel_initializer='normal', activation='relu'))  
+        model.add(Dense(1, kernel_initializer='normal', activation='sigmoid'))
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.fit(self.trainingData,self.trainingLabels, batch_size=32, epochs=10, verbose=1)
+        score = model.evaluate(self.testData, self.testLabels, verbose=1)
+        rospy.loginfo("[ LOSS] {}   [ ACCURACY] {}".format(score[0],score[1]))
+        
+        with open(os.path.join(self.PKG_PATH,"bin",self.MODEL_PATH,"model.json"), "w") as json_file:
+            json_file.write(model.to_json())
+        model.save_weights(os.path.join(self.PKG_PATH,"bin",self.MODEL_PATH,"model.h5"))
+        rospy.loginfo("Saved model to disk")  
+ 
 
     def visualize_data(self):
         ipca = IncrementalPCA(n_components=2, batch_size=3)
@@ -64,4 +87,3 @@ class Classifier:
         rospy.loginfo("PLOTTING GRAPH")
         self.ax.plot(X1, Y1, 'r.', X2, Y2, 'g.')
         plt.show()
-        
