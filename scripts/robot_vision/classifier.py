@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense
 
+from robot_vision import termcolors
+
 
 rospack = rospkg.RosPack()
 
@@ -38,19 +40,22 @@ class Classifier:
         score = self.clf.score(self.trainingData, self.trainingLabels)
         print("score", score)
 
-    def trainFCNet(self):
+    def trainFCNet(self,epochs=10,verbose=True):
         model = Sequential()
         model.add(Dense(60, input_dim=306, kernel_initializer='normal', activation='relu'))  
         model.add(Dense(1, kernel_initializer='normal', activation='sigmoid'))
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(self.trainingData,self.trainingLabels, batch_size=32, epochs=10, verbose=1)
+        model.fit(self.trainingData,self.trainingLabels, batch_size=32, epochs=epochs, verbose= 1 if verbose else 0)
         score = model.evaluate(self.testData, self.testLabels, verbose=1)
-        rospy.loginfo("[ LOSS] {}   [ ACCURACY] {}".format(score[0],score[1]))
+        rospy.loginfo("{}[ LOSS] {}   [ ACCURACY] {}{}".format(termcolors.OKGREEN,score[0],score[1],termcolors.ENDC))
         
         with open(os.path.join(self.PKG_PATH,"bin",self.MODEL_PATH,"model.json"), "w") as json_file:
             json_file.write(model.to_json())
         model.save_weights(os.path.join(self.PKG_PATH,"bin",self.MODEL_PATH,"model.h5"))
-        rospy.loginfo("Saved model to disk")  
+        rospy.loginfo("Saved model to disk") 
+
+    def trainFCNetCaffe(self):
+        pass 
  
 
     def visualize_data(self):
