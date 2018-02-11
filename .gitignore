@@ -2,3 +2,4 @@ TODO.txt
 bin/banana_1.xml
 bin/Dataset/
 bin/*.pkl
+*.pyc
