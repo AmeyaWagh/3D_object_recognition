@@ -1,6 +1,14 @@
 #ifndef _COMMON_CONSTANTS_H_
 #define _COMMON_CONSTANTS_H_
 
+#define RED 0xFF0000
+#define GREEN 0x00FF00
+#define BLUE 0x0000FF
+#define YELLOW 0xFFFF00
+#define CYAN 0x00FFFF
+#define MAGENTA 0xFF00FF
+
+
 double voxelLeafSize = 0.01;
 int removePlaneIterations = 100;
 double distanceThreshold = 0.02;

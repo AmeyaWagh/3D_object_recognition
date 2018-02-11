@@ -17,7 +17,7 @@ namespace visualizer{
       visualization_msgs::Marker
       getBoundingBox(float minX,float minY,float minZ,
                      float maxX,float maxY,float maxZ,
-                     std::string _color, int _id);
+                     uint32_t _color, int _id);
 	};
 
 } // namespace visualization

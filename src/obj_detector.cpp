@@ -174,7 +174,7 @@ void mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
             {
                   Marker_vector.push_back(bb.getBoundingBox(minPT.x,minPT.y,minPT.z,
                                                             maxPT.x,maxPT.y,maxPT.z,// x,y,z
-                                                            "GREEN",(int)i));
+                                                            YELLOW,(int)i));
               }
 
           }
@@ -184,7 +184,7 @@ void mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
             {
                   Marker_vector.push_back(bb.getBoundingBox(minPT.x,minPT.y,minPT.z,
                                                             maxPT.x,maxPT.y,maxPT.z,// x,y,z
-                                                            "BLUE",(int)i));
+                                                            CYAN,(int)i));
               }
 
           }

@@ -43,9 +43,10 @@ visualizer::BoundingBox::getBoundingBox(float x,float y,float z,
 visualization_msgs::Marker
 visualizer::BoundingBox::getBoundingBox(float minX,float minY,float minZ,
                                         float maxX,float maxY,float maxZ,
-                                        std::string _color, int _id){
+                                        uint32_t _color, int _id){
 
 
+    _color = _color & 0x00FFFFFF;
     marker.id = _id;
     marker.pose.position.x = (minX+maxX)/2.0;
     marker.pose.position.y = (minY+maxY)/2.0;
@@ -60,21 +61,9 @@ visualizer::BoundingBox::getBoundingBox(float minX,float minY,float minZ,
     marker.pose.orientation.z = 0;
     marker.pose.orientation.w = 1;
 
-    if (_color == "RED"){
-        marker.color.r = 1.0f;
-        marker.color.g = 0.0f;
-        marker.color.b = 0.0f;
-    }
-    else if(_color == "BLUE"){
-        marker.color.r = 0.0f;
-        marker.color.g = 0.0f;
-        marker.color.b = 1.0f;
-    }
-    else{
-        marker.color.r = 0.0f;
-        marker.color.g = 1.0f;
-        marker.color.b = 0.0f;
-    }
+    marker.color.r = ((_color & 0x00FF0000) >> 16)/255.0f;
+    marker.color.g = ((_color & 0x0000FF00) >> 8)/255.0f;
+    marker.color.b = ((_color & 0x000000FF) >> 0)/255.0f;
 
     return marker;
 }
