@@ -326,34 +326,17 @@ target_link_libraries(
 
 #Add custom (non compiling) targets so launch scripts and python files show up in QT Creator's project view.
 file(GLOB_RECURSE EXTRA_FILES */*)
-add_custom_target(${PROJECT_NAME}_OTHER_FILES ALL WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} SOURCES ${EXTRA_FILES})
-
-### Action Server
-#add_executable(fibonacci_server ${PROJECT_SOURCE_DIR}/src/fibonacci_server.cpp)
-
-#add_dependencies(
-#  fibonacci_server
-#  ${robot_vision_EXPORTED_TARGETS}
-#)
-
-#target_link_libraries(
-#    fibonacci_server
-#    ${catkin_LIBRARIES})
+file(GLOB_RECURSE README_FILES *.md)
+add_custom_target(
+    ${PROJECT_NAME}_OTHER_FILES ALL WORKING_DIRECTORY
+    ${PROJECT_SOURCE_DIR} SOURCES
+    ${EXTRA_FILES}
+    ${README_FILES})
 
 
 
 
-### Action Client
-#add_executable(fibonacci_client src/fibonacci_client.cpp)
 
-#add_dependencies(
-#  fibonacci_client
-#  ${robot_vision_EXPORTED_TARGETS}
-#)
 
-#target_link_libraries(
-#  fibonacci_client
-#  ${catkin_LIBRARIES}
-#)
 
 
