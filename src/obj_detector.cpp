@@ -145,12 +145,7 @@ mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
           {
             actionlib::SimpleClientGoalState state = ac.getState();
             ROS_INFO("Action finished: %s",state.toString().c_str());
-            result  = ac.getResult();
-
-            for(size_t i=0;i<result->sequence.size();i++)
-            {
-                std::cout << result->sequence.at(i) << " ";
-            }
+            result  = ac.getResult();       
 
           }
           else

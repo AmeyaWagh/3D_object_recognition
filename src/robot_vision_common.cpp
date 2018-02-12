@@ -18,7 +18,15 @@
 
 #include <robot_vision/common_constants.h>
 
-
+namespace robot_vision{
+template < typename T >
+std::string to_string( const T& n )
+{
+    std::ostringstream stm ;
+    stm << n ;
+    return stm.str() ;
+}
+}
 
 void
 robot_vision_common::AssembleCloud(
@@ -75,7 +83,7 @@ robot_vision_common::detectObject(
           {
                 Marker_vector.push_back(bb.getBoundingBox(minPT.x,minPT.y,minPT.z,
                                                           maxPT.x,maxPT.y,maxPT.z,// x,y,z
-                                                          GREEN,_id));
+                                                          color_array[clf_idx/2],_id));
             }
 
         }

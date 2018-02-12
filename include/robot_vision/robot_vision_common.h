@@ -23,6 +23,8 @@
 
 namespace robot_vision_common{
 
+    template < typename T > std::string to_string( const T& n );
+
     void AssembleCloud(std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> &finalClusters,
                        sensor_msgs::PointCloud2 &output);
 
