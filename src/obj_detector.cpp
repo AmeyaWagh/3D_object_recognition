@@ -137,10 +137,6 @@ mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
           bool finished_before_timeout;
           finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
 
-          static const float arr[] = {0.0,0.0};
-          std::vector<float> predBowl (arr, arr + sizeof(arr) / sizeof(arr[0]) );
-          std::vector<float> predMug (arr, arr + sizeof(arr) / sizeof(arr[0]) );
-
           if (finished_before_timeout)
           {
             actionlib::SimpleClientGoalState state = ac.getState();
