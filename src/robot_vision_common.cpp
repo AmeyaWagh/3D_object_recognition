@@ -1,12 +1,24 @@
 #include <robot_vision/robot_vision_common.h>
+
 #include <ros/ros.h>
 #include <iostream>
 #include <sensor_msgs/PointCloud2.h>
+
 #include <pcl_ros/point_cloud.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
+
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <robot_vision/SVMclassifierAction.h>
+
+#include <robot_vision/visualizer.h>
+
+#include <robot_vision/common_constants.h>
+
+
 
 void
 robot_vision_common::AssembleCloud(
@@ -41,4 +53,32 @@ robot_vision_common::inDimensions(pcl::PointXYZ minPT,pcl::PointXYZ maxPT,
     else{
         return false;
     }
+}
+
+
+void
+robot_vision_common::detectObject(
+                pcl::PointXYZ &minPT,pcl::PointXYZ &maxPT,
+                robot_vision::SVMclassifierResultConstPtr result,
+                double threshold, double scale,
+                visualizer::BoundingBox &bb,
+                                  int _id,
+                std::vector<visualization_msgs::Marker> &Marker_vector) // updates Marker vector
+{
+    int no_of_classes = result->sequence.size();
+
+    for (size_t clf_idx=0; clf_idx<no_of_classes;clf_idx+=2)
+    {
+        if (result->sequence[clf_idx]==1.0 && result->sequence[clf_idx+1]>threshold){
+//            pcl::getMinMax3D(*cloudSegment,minPT,maxPT);
+            if(inDimensions(minPT,maxPT,bowlLength,bowlWidth,bowlHeight,scale))
+          {
+                Marker_vector.push_back(bb.getBoundingBox(minPT.x,minPT.y,minPT.z,
+                                                          maxPT.x,maxPT.y,maxPT.z,// x,y,z
+                                                          GREEN,_id));
+            }
+
+        }
+    }
+
 }
