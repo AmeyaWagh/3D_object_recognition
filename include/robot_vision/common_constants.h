@@ -16,6 +16,8 @@ const double mugLength=0.0943486;
 const double mugWidth=0.127;
 const double mugHeight=0.1155481;
 
+static const int color_array[] = {RED,GREEN,BLUE,YELLOW,CYAN,MAGENTA};
+
 extern double voxelLeafSize;
 extern int removePlaneIterations;
 extern double distanceThreshold;
