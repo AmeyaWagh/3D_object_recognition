@@ -8,4 +8,4 @@
 - [ ]   Test with multiple voxel grid sizes.
 - [ ]   Add detection and drawing of bounding box to common.
 - [X]   Color in getBoundingBox as hex.
-
+- [ ] Multiple density segmentation [CREATED] 12.Feb 2018 23:02:59
