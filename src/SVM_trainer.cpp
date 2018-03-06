@@ -126,7 +126,7 @@ getPointCloud::getTrainingData(std::vector <cv::Mat>& _trainingData,
 
                 //-- voxelization of the cloud --------//
                 vg.setInputCloud (cloud);
-                vg.setLeafSize (0.01f, 0.01f, 0.01f);
+                vg.setLeafSize (0.005f, 0.005f, 0.005f);
                 vg.filter (*cloud);
                 //-- Getting the descriptors ----------//
                 pc.cloudinput(cloud);

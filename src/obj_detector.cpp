@@ -38,15 +38,6 @@ double tolerance;
 int minClustersSize ;
 int maxClustersSize ;
 
-//namespace patch
-//{
-//    template < typename T > std::string to_string( const T& n )
-//    {
-//        std::ostringstream stm ;
-//        stm << n ;
-//        return stm.str() ;
-//    }
-//}
 
 
 void callback(robot_vision::robot_vision_paramsConfig &config, uint32_t level) {
