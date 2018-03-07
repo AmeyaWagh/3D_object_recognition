@@ -82,13 +82,17 @@ class CNNModel:
         _idx = np.argmax(self.model.predict(data))
         return labelsSet[_idx],self.model.predict_proba(data)[0][_idx]
 
-    def save_model(self):
+    def save_model(self,base_path="."):
         # serialize model to JSON
+        json_path = os.path.join(base_path,'model.json')
+        print(OKGREEN+json_path+ENDC)
         model_json = self.model.to_json()
-        with open("model.json", "w") as json_file:
+        with open(json_path, "w") as json_file:
             json_file.write(model_json)
         # serialize weights to HDF5
-        self.model.save_weights("model.h5")
+        weight_file = os.path.join(base_path,"model.h5")
+        print(OKGREEN+weight_file+ENDC)
+        self.model.save_weights(weight_file)
         print("Saved model to disk")
 
     def load_model(self,base_path="."):

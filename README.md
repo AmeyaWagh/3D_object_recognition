@@ -2,7 +2,7 @@
 
 ![3D_Object_REC](doc/obj_det.png)
 
-* project is still in development stage
+### project is still in development stage
 
 ## Nodes
 ```
@@ -14,19 +14,19 @@
 ```
 
 ### tf_emitter
-publishes world frame for RViz 
+- publishes world frame for RViz 
 
 ### segmentationNode
-publishes all the segmented clouds to /pcVector
+- publishes all the segmented clouds to /pcVector
 
 ### classificationNode
-subscribes /pcVector and classifies every segmented pointcloud using 3DCNN and publishes bounding boxes as MarkerArray
+- subscribes /pcVector and classifies every segmented pointcloud using 3DCNN and publishes bounding boxes as MarkerArray
 
 ### Rviz
-used for visualization
+- used for visualization
 
 ### pcd_to_pointcloud
-to publish scenes for testing
+- to publish scenes for testing
 
 ## To run package
 ```
@@ -44,25 +44,32 @@ https://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/
 ## Directory Structure for DataSet
 
 ```
-├── apple_1
-|		|── apple_2_4_9.pcd
-|		.
-|		`── apple_2_1_111.pcd
-├── banana_1
-|		|── banana_1_4_6.pcd
-|		.
-|		`── banana_1_4_80.pcd
-├── bowl_1
-|		|── bowl_2_1_9.pcd
-|		.
-|		`── bowl_3_4_119.pcd
-├── calculator_1
-|		|── calculator_2_1_2.pcd
-|		.
-|		`── calculator_3_2_138.pcd
-└── coffee_mug_1
- 		|── coffee_mug_3_4_6.pcd
- 		.
- 		`── coffee_mug_3_4_83.pcd
+Dataset_RGBD
+	|
+	├── apple_1
+	|		|── apple_2_4_9.pcd
+	|		.
+	|		`── apple_2_1_111.pcd
+	├── banana_1
+	|		|── banana_1_4_6.pcd
+	|		.
+	|		`── banana_1_4_80.pcd
+	├── bowl_1
+	|		|── bowl_2_1_9.pcd
+	|		.
+	|		`── bowl_3_4_119.pcd
+	├── calculator_1
+	|		|── calculator_2_1_2.pcd
+	|		.
+	|		`── calculator_3_2_138.pcd
+	└── coffee_mug_1
+	 		|── coffee_mug_3_4_6.pcd
+	 		.
+	 		`── coffee_mug_3_4_83.pcd
 
+```
+
+## Training the classifier
+```
+rosrun robot_vision trainer.py
 ```
