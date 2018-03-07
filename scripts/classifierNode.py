@@ -130,7 +130,7 @@ class NodeHandler:
                 if dim_check:
                     volume_data,quaternion = self.g.get_volumetric_data(cloud_array)
                     label,proba = cnn.predict(np.array([[volume_data]]),self.CLASS_PATH)
-                    if proba >= PRED_THRESHOLD:
+                    if (proba >= PRED_THRESHOLD) and (label in ["coffee_mug_1","bowl_1"]):
                         rospy.loginfo(" Label {} - Probability {}".format(label,proba))
                         final_clusters.append((minmaxpt[0],minmaxpt[1],label,proba,quaternion))
         drawMarkers(final_clusters)        
