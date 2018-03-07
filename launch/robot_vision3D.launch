@@ -7,7 +7,7 @@
 		default="$(find robot_vision)/bin/scenes/10.pcd" />
 	<arg
 		name="cloudPublishRate"
-		default="5" />	
+		default="15" />	
 	<node
 		pkg="pcl_ros"
 		type="pcd_to_pointcloud"
@@ -43,13 +43,13 @@
 		output="screen"
 		respawn="true" />
 
-	<!--  SVM Action server  -->
-	<!-- <node
+	<!--  3D CNN  -->
+	<node
 		pkg="robot_vision" 
-		type="SVM_Action_Server" 
-		name="SVM_Action_Server" 
+		type="classifierNode.py" 
+		name="classifierNode" 
 		output="screen"
-		respawn="true" />	 -->
+		respawn="true" />	
 
 
 	<!-- Rviz launch-->

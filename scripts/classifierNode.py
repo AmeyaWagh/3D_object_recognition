@@ -56,6 +56,7 @@ def drawMarkers(final_clusters):
     _id=0
     for cluster in final_clusters:
         _color = COLOR_ARRAY[CLASS_PATH.index(cluster[2])]
+        _quat = cluster[4]
         marker = Marker()
         marker.header.frame_id = "/world"
         marker.type = marker.CUBE
@@ -64,7 +65,11 @@ def drawMarkers(final_clusters):
         minPT = cluster[0]
         maxPT = cluster[1]
         
-        marker.pose.orientation.w = 1.0
+        marker.pose.orientation.x = _quat[0]
+        marker.pose.orientation.y = _quat[1]
+        marker.pose.orientation.z = _quat[2]
+        marker.pose.orientation.w = _quat[3]
+
         marker.pose.position.x = (maxPT[0]+minPT[0])/2.0
         marker.pose.position.y = (maxPT[1]+minPT[1])/2.0 
         marker.pose.position.z = (maxPT[2]+minPT[2])/2.0
@@ -81,11 +86,11 @@ def drawMarkers(final_clusters):
         
         marker_text = Marker(type = Marker.TEXT_VIEW_FACING,
             id = _id,
-            pose = Pose(Point(maxPT[0], maxPT[1], maxPT[2]), Quaternion(0, 0, 0, 1)),
+            pose = Pose(Point(maxPT[0], maxPT[1], maxPT[2]), Quaternion(_quat[0], _quat[1], _quat[2], _quat[3])),
             scale = Vector3(0.06, 0.06, 0.06),
             header = marker.header,
             color=ColorRGBA(1.0,0.0,1.0,1.0),
-            text=cluster[2])
+            text="{}".format(cluster[2].strip('_1')))
         _id += 1
         markerArray.markers.append(marker)
         markerArray.markers.append(marker_text)
@@ -114,20 +119,20 @@ class NodeHandler:
         return cloud_array
     
     def callback(self,data):
+        global graph
         print("\n")
         rospy.loginfo(rospy.get_caller_id() + "received %d segments", len(data.pointClouds))
-        global graph
         final_clusters = []
         with graph.as_default():
             for cloud in data.pointClouds:
                 cloud_array = self.pc_to_numpy(cloud)
                 dim_check,minmaxpt = is_in_dimension(cloud_array)
                 if dim_check:
-                    volume_data = self.g.get_volumetric_data(cloud_array)
+                    volume_data,quaternion = self.g.get_volumetric_data(cloud_array)
                     label,proba = cnn.predict(np.array([[volume_data]]),self.CLASS_PATH)
                     if proba >= PRED_THRESHOLD:
                         rospy.loginfo(" Label {} - Probability {}".format(label,proba))
-                        final_clusters.append((minmaxpt[0],minmaxpt[1],label,proba))
+                        final_clusters.append((minmaxpt[0],minmaxpt[1],label,proba,quaternion))
         drawMarkers(final_clusters)        
     
     def listener(self):
