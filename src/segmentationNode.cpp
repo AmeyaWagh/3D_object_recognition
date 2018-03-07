@@ -43,28 +43,32 @@ int maxClustersSize ;
 
 
 
-void callback(robot_vision::robot_vision_paramsConfig &config, uint32_t level) {
-  ROS_INFO("Reconfigure Request: voxelLeafSize: %f \n removePlaneIterations: %d \n distanceThreshold: %f \n PercentageCloud: %f \n tolerance: %f \n minClustersSize: %d \n maxClustersSize: %d \n",
-            config.voxelLeafSize, config.removePlaneIterations,
-            config.distanceThreshold,
-            config.PercentageCloud,
-            config.tolerance,
-            config.minClustersSize,config.maxClustersSize);
+void reconfigCallback(robot_vision::robot_vision_paramsConfig &config, uint32_t level) 
+{
+  voxelLeafSize= config.voxelLeafSize;
+  removePlaneIterations= config.removePlaneIterations;
+  distanceThreshold= config.distanceThreshold;
+  PercentageCloud= config.PercentageCloud;
+  tolerance= config.tolerance;
+  minClustersSize= config.minClustersSize;
+  maxClustersSize= config.maxClustersSize;
 
-            voxelLeafSize= config.voxelLeafSize;
-            removePlaneIterations= config.removePlaneIterations;
-            distanceThreshold= config.distanceThreshold;
-            PercentageCloud= config.PercentageCloud;
-            tolerance= config.tolerance;
-            minClustersSize= config.minClustersSize;
-            maxClustersSize= config.maxClustersSize;
+  ROS_INFO("------------------------------------------------------------------");
+  ROS_INFO("Reconfigure Request:");
+  ROS_INFO("VoxelLeafSize: %f",config.voxelLeafSize);
+  ROS_INFO("RemovePlaneIterations: %d",config.removePlaneIterations);
+  ROS_INFO("DistanceThreshold: %f",config.distanceThreshold);
+  ROS_INFO("PercentageCloud: %f",config.PercentageCloud);
+  ROS_INFO("Tolerance: %f",config.tolerance);
+  ROS_INFO("(minClustersSize: %d)(maxClustersSize: %d)",config.minClustersSize,config.maxClustersSize);
+  ROS_INFO("------------------------------------------------------------------\n");
 }
 
 
 /* ------------------------------------------------------------------------
  * CALL BACK HANDLER
  */
-class mycb
+class segmenterNodeHandler
 {
   public:
     ros::Publisher marker_pub;
@@ -74,19 +78,19 @@ class mycb
     actionlib::SimpleActionClient<robot_vision::SVMclassifierAction> ac;
     robot_vision::SVMclassifierResultConstPtr result;
 
-    mycb(ros::NodeHandle nh);
+    segmenterNodeHandler(ros::NodeHandle nh);
     void cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud);
     void pushMarker();
 };
 
-mycb::mycb(ros::NodeHandle nh): bb("world"),ac("SVMAction", true)
+segmenterNodeHandler::segmenterNodeHandler(ros::NodeHandle nh): bb("world"),ac("SVMAction", true)
 {
     marker_pub = nh.advertise<visualization_msgs::MarkerArray>(
         "visualization_marker", 1);
 }
 
 void
-mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
+segmenterNodeHandler::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
 {
 
       ROS_INFO("received cloud");
@@ -108,10 +112,9 @@ mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
       // Publish Segmented Cloud
       sensor_msgs::PointCloud2 output;
       robot_vision_common::AssembleCloud(finalClusters,output);
-      // Publish Segmented Cloud end
       pub_segmented.publish(output);
+      // Publish Segmented Cloud end
 
-//      std::vector<sensor_msgs::PointCloud2>  pclVector;
       robot_vision::pointcloudVector pv;
       pcl::PCLPointCloud2 pc;
       sensor_msgs::PointCloud2 outputPC;
@@ -119,60 +122,16 @@ mycb::cloud_cb (const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
       {
         pcl::toPCLPointCloud2(*finalClusters[i],pc);
         pcl_conversions::fromPCL(pc, outputPC);
-//        pclVector.push_back(outputPC);
         pv.pointClouds.push_back(outputPC);
       }
-//      pclVector.header.frame_id=std::string("world");
       pub_pcVector.publish(pv);
       ros::Rate r(1);
 
 
-      /*for(size_t i=0;i<finalClusters.size();i++)
-      {
-          p.cloudinput(finalClusters[i]);
-
-          ac.waitForServer(); //will wait for infinite time
-          // send a goal to the action
-          robot_vision::SVMclassifierGoal goal;
-          pcl::PointCloud<pcl::VFHSignature308>::Ptr inputDescriptor = p.getDescriptor();
-          for(size_t idx=0;idx<306;idx++)
-          {
-              goal.order.push_back((float)inputDescriptor->points[0].histogram[idx]);
-          }
-          ac.sendGoal(goal);
-
-          bool finished_before_timeout;
-          finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
-
-          static const float arr[] = {0.0,0.0};
-          std::vector<float> predBowl (arr, arr + sizeof(arr) / sizeof(arr[0]) );
-          std::vector<float> predMug (arr, arr + sizeof(arr) / sizeof(arr[0]) );
-
-          if (finished_before_timeout)
-          {
-            actionlib::SimpleClientGoalState state = ac.getState();
-            ROS_INFO("Action finished: %s",state.toString().c_str());
-            result  = ac.getResult();
-
-          }
-          else
-          {
-              ROS_INFO("Action did not finish before the time out.");
-          }
-          pcl::getMinMax3D(*finalClusters[i],minPT,maxPT);
-          robot_vision_common::detectObject(minPT,maxPT,result,0.3,1.5,
-                                            bb,(int)i,Marker_vector);
-
-      }*/ // END FOR LOOP
-
-
-//      pub.publish(*cs.cloud_filtered);
-//      pushMarker();
-
 } //END cloud_cb
 
 void
-mycb::pushMarker()
+segmenterNodeHandler::pushMarker()
 {
     marker_array.markers.resize(Marker_vector.size());
     for(size_t i=0;i<Marker_vector.size();i++)
@@ -190,8 +149,8 @@ main (int argc, char** argv)
 {
     ros::init (argc, argv, "obj_detector");
     ros::NodeHandle nh;
-    mycb cbk(nh);
-    ros::Subscriber sub = nh.subscribe ("cloud_pcd", 1, &mycb::cloud_cb,&cbk);
+    segmenterNodeHandler cbk(nh);
+    ros::Subscriber sub = nh.subscribe ("cloud_pcd", 1, &segmenterNodeHandler::cloud_cb,&cbk);
 
     pub = nh.advertise<pcl::PointCloud<pcl::PointXYZ > >("output", 1);
     pub_segmented = nh.advertise<sensor_msgs::PointCloud2>("segmented", 1);
@@ -201,7 +160,7 @@ main (int argc, char** argv)
     dynamic_reconfigure::Server<robot_vision::robot_vision_paramsConfig>::CallbackType f;
 
 
-    f = boost::bind(&callback, _1, _2);
+    f = boost::bind(&reconfigCallback, _1, _2);
     server.setCallback(f);
 
     ros::spin ();

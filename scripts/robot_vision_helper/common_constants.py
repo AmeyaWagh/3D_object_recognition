@@ -1,0 +1,15 @@
+#! /usr/bin/env python
+
+BOX_SIZE = (0.3,0.3,0.3)
+PRED_THRESHOLD = 0.99
+
+RED = 0xFF0000
+GREEN = 0x00FF00
+BLUE = 0x0000FF
+YELLOW = 0xFFFF00
+CYAN = 0x00FFFF
+MAGENTA = 0xFF00FF
+
+COLOR_ARRAY = [RED,GREEN,BLUE,YELLOW,CYAN,MAGENTA]
+
+CLASS_PATH = ["apple_1","banana_1","bowl_1","calculator_1","coffee_mug_1"]
