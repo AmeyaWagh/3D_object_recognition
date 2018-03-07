@@ -14,6 +14,7 @@ find_package(
     pcl_ros
     roscpp
     sensor_msgs
+    message_generation
 )
 find_package(PCL 1.8 REQUIRED)
 find_package( OpenCV 2 REQUIRED )
@@ -51,12 +52,12 @@ find_package( OpenCV 2 REQUIRED )
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
+# Generate messages in the 'msg' folder
+ add_message_files(
+   DIRECTORY msg
+   FILES pointcloudVector.msg
 #   Message2.msg
-# )
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -120,6 +121,7 @@ catkin_package(
                 roscpp
                 sensor_msgs
                 actionlib_msgs
+                message_runtime
 
 #  DEPENDS system_lib
 )
@@ -250,6 +252,33 @@ target_link_libraries(
     ${PCL_LIBRARIES}
     ${OpenCV_LIBS})
 
+add_executable(
+    obj_recognition src/obj_recognition.cpp
+    ${PROJECT_SOURCE_DIR}/src/visualizer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cloud_segmenter.cpp
+    ${PROJECT_SOURCE_DIR}/src/descriptors.cpp
+    ${PROJECT_SOURCE_DIR}/src/classifier.cpp
+    ${PROJECT_SOURCE_DIR}/src/robot_vision_common.cpp
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/visualizer.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/cloud_segmenter.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/descriptors.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/classifier.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/robot_vision_common.h
+    ${PROJECT_SOURCE_DIR}/include/robot_vision/common_constants.h
+    )
+
+
+add_dependencies(
+    obj_recognition
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
+    ${catkin_EXPORTED_TARGETS}
+    ${PROJECT_NAME}_gencfg)
+
+target_link_libraries(
+    obj_recognition
+    ${catkin_LIBRARIES}
+    ${PCL_LIBRARIES}
+    ${OpenCV_LIBS})
 
 
 ## TF emitter

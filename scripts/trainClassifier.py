@@ -6,8 +6,8 @@ from std_msgs.msg import String
 
 rospack = rospkg.RosPack()
 
-from robot_vision.datahandler import DataHandler
-from robot_vision.classifier import Classifier
+from robot_vision_helper.datahandler import DataHandler
+from robot_vision_helper.classifier import Classifier
 
 
 if __name__ == '__main__':
