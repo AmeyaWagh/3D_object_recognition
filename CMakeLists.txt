@@ -253,7 +253,7 @@ target_link_libraries(
     ${OpenCV_LIBS})
 
 add_executable(
-    obj_recognition src/obj_recognition.cpp
+    segmentationNode src/segmentationNode.cpp
     ${PROJECT_SOURCE_DIR}/src/visualizer.cpp
     ${PROJECT_SOURCE_DIR}/src/cloud_segmenter.cpp
     ${PROJECT_SOURCE_DIR}/src/descriptors.cpp
@@ -269,13 +269,13 @@ add_executable(
 
 
 add_dependencies(
-    obj_recognition
+    segmentationNode
     ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
     ${PROJECT_NAME}_gencfg)
 
 target_link_libraries(
-    obj_recognition
+    segmentationNode
     ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
     ${OpenCV_LIBS})

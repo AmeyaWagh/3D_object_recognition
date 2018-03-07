@@ -29,8 +29,8 @@
 	<!-- Publishes Markers -->
 	<node 
 		pkg="robot_vision" 
-		type="obj_recognition" 
-		name="obj_recognition" 
+		type="segmentationNode" 
+		name="segmentationNode" 
 		output="screen"
 		respawn="true" />
 
