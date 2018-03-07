@@ -2,7 +2,7 @@
 
 ![3D_Object_REC](doc/obj_det.png)
 
-### project is still in development stage
+### DISCLAIMER: project is still in development stage
 
 ## Nodes
 ```
