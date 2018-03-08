@@ -4,6 +4,16 @@
 
 ### DISCLAIMER: project is still in development stage, I try to keep master branch as updated and functional as possible.
 
+## Dependencies
+- ROS Kinetic
+- PCL 1.8
+- Opencv 2
+- Python 2.7
+- Numpy
+- cv2
+- TensorFlow
+- Keras
+
 ## Nodes
 ```
 	|-> tf_emitter
@@ -27,12 +37,6 @@
 
 ### pcd_to_pointcloud
 - to publish scenes for testing
-
-## To run package
-```
-roslaunch robot_vision robot_vision3.launch
-```
-
 
 ## Note
 /bin - contains .pcd scenes which are broadcasted
@@ -72,4 +76,9 @@ Dataset_RGBD
 ## Training the classifier
 ```
 rosrun robot_vision trainer.py
+```
+
+## To run package
+```
+roslaunch robot_vision robot_vision3.launch
 ```
