@@ -23,19 +23,19 @@
 	`-> pcd_to_pointcloud
 ```
 
-### tf_emitter
+#### tf_emitter
 - publishes world frame for RViz 
 
-### segmentationNode
+#### segmentationNode
 - publishes all the segmented clouds to /pcVector
 
-### classificationNode
+#### classificationNode
 - subscribes /pcVector and classifies every segmented pointcloud using 3DCNN and publishes bounding boxes as MarkerArray
 
-### Rviz
+#### Rviz
 - used for visualization
 
-### pcd_to_pointcloud
+#### pcd_to_pointcloud
 - to publish scenes for testing
 
 ## Note
