@@ -17,6 +17,7 @@ print(OKBLUE+PACKAGE_PATH+ENDC)
 
 
 class DisplayCloud():
+    """ A simple visualizer using Matplotlib """
     def __init__(self):
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -31,8 +32,6 @@ class DisplayCloud():
             z.append(float(pt[2]))
 
         self.ax.plot(x, y, z, pts)
-
-
 
     def showCloud(self):
         plt.show()
