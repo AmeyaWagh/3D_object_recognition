@@ -16,8 +16,8 @@ find_package(
     sensor_msgs
     message_generation
 )
-find_package(PCL 1.8 REQUIRED)
-find_package( OpenCV 2 REQUIRED )
+find_package(PCL 1.9 REQUIRED)
+find_package(OpenCV 3 REQUIRED )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

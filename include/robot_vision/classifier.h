@@ -30,7 +30,7 @@
 
 class classifier{
 private:
-    CvSVM SVMclf;
+    cv::Ptr<cv::ml::SVM> SVMclf;
 public:
     classifier(void);
     classifier(std::string filename);
