@@ -27,35 +27,37 @@
 
 
 classifier::classifier(void){
+        SVMclf = cv::ml::SVM::create();
     }
+
 classifier::classifier(std::string filename){
-        SVMclf.load(filename.c_str());
+        SVMclf = cv::ml::SVM::create();
+        SVMclf->load(filename.c_str());
     }
+
 void classifier::trainSVM(cv::Mat _trainingData, cv::Mat _trainingLabels){
-    CvSVMParams params;
-    params.svm_type    = CvSVM::C_SVC;
-    params.kernel_type = CvSVM::LINEAR;
-    params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+    SVMclf->setType(cv::ml::SVM::Types::C_SVC);
+	SVMclf->setKernel(cv::ml::SVM::KernelTypes::LINEAR);
+	SVMclf->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER, 100, 1e-6));
 
-
-    SVMclf.train(_trainingData, _trainingLabels, cv::Mat(), cv::Mat(), params);
+    cv::Ptr<cv::ml::TrainData> tData = cv::ml::TrainData::create(_trainingData, cv::ml::ROW_SAMPLE,_trainingLabels);
+    SVMclf->train(tData);
     std::cout << "SVM trained " << std::endl;
-    SVMclf.save("svmclf.xml");
+    SVMclf->save("SVMclf->xml");
 
 }
 void classifier::trainSVM(cv::Mat _trainingData,
                           cv::Mat _trainingLabels,
                           std::string fileName){
-    CvSVMParams params;
-    params.svm_type    = CvSVM::C_SVC;
-    params.kernel_type = CvSVM::LINEAR;
-    params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+    SVMclf->setType(cv::ml::SVM::Types::C_SVC);
+	SVMclf->setKernel(cv::ml::SVM::KernelTypes::LINEAR);
+	SVMclf->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER, 100, 1e-6));
 
-
-    SVMclf.train(_trainingData, _trainingLabels, cv::Mat(), cv::Mat(), params);
+    cv::Ptr<cv::ml::TrainData> tData = cv::ml::TrainData::create(_trainingData, cv::ml::ROW_SAMPLE,_trainingLabels);
+    SVMclf->train(tData);
     std::cout << "SVM trained " << std::endl;
     fileName+=".xml";
-    SVMclf.save(fileName.c_str());
+    SVMclf->save(fileName.c_str());
 
 }
 
@@ -68,10 +70,10 @@ void classifier::validateSVM(cv::Mat _testData, cv::Mat _testLabels){
     float hits = 0;
     float miss = 0;
     for(size_t idx=0;idx<_testData.cols;idx++){
-        std::cout << " [test] "<< "idx:"<< idx << " " << SVMclf.predict(_testData.row(idx)) << " "
+        std::cout << " [test] "<< "idx:"<< idx << " " << SVMclf->predict(_testData.row(idx)) << " "
                   << _testLabels.at<float>(idx,0) << " [ confidence ] "
-                  << getConfidence(SVMclf.predict(_testData.row(idx),true)) <<  std::endl;
-        if (SVMclf.predict(_testData.row(idx))==_testLabels.at<float>(idx,0))
+                  << getConfidence(SVMclf->predict(_testData.row(idx))) <<  std::endl;
+        if (SVMclf->predict(_testData.row(idx))==_testLabels.at<float>(idx,0))
             hits++;
         else
             miss++;
@@ -81,8 +83,8 @@ void classifier::validateSVM(cv::Mat _testData, cv::Mat _testLabels){
 
 std::vector<float> classifier::predict(cv::Mat query){
     std::vector<float> result;
-    result.push_back( SVMclf.predict(query));
-    result.push_back( getConfidence(SVMclf.predict(query,true)));
+    result.push_back( SVMclf->predict(query));
+    result.push_back( getConfidence(SVMclf->predict(query)));
     return result;
 }
 
